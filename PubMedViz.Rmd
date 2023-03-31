@@ -1,0 +1,47 @@
+---
+title: "PubMedVizR"
+author: "Dan Kerchner"
+date: "2023-03-31"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This script requires in input file called `search_params.csv`, which has the following columns:  
+  
+`mainterm` (e.g. microbiom*)  
+`subterm` (e.g. 16S)  
+`startyear` (e.g. 2000)  
+`endyear` (e.g. 2022)  
+
+```{r}
+library(rentrez)
+library(ggplot2)
+
+terms_df <- read.csv('search_params.csv')
+
+# Returns paper count for a single year matching term AND subterm
+search_term_subterm_year <- function(term, subterm, year){
+  query <- paste(term, "AND", subterm, "AND (", year, "[PDAT])")
+  entrez_search(db="pubmed", term=query, retmax=0)$count
+}
+
+df <- data.frame()
+for(i in 1:nrow(terms_df)) {
+    row <- terms_df[i,]
+  
+    for (year in row$start_year:row$end_year) {
+        papers_count <- search_term_subterm_year(term=row$term, subterm=row$subterm, year = year)
+        result_i_df <- data.frame(term = row$term, subterm = row$subterm, year = year, count = papers_count)
+        df <- rbind(df, result_i_df)
+    }
+}
+
+ggplot(data = df) +
+  geom_area(aes(x = year, y = count, fill = subterm), alpha = 0.5) +
+  theme(axis.text.x = element_text(angle = 90)) +
+  facet_wrap(~ term, scales = c("free"), ncol = 2) # or just free_y
+```
+

@@ -1,0 +1,10 @@
+"term","subterm","start_year","end_year"
+"microbiom*","16S",2006,2022
+"microbiom*","NGS",2006,2022
+"genomic*","NGS",2002,2022
+"genomic*","qPCR",2002,2022
+"metabolom*","NMR",2008,2022
+"metabolom*","LC-MS",2008,2022
+"proteom*", "NMR",2005,2022
+"proteom*", "GC-MS",2005,2022
+"proteom*", "LC-MS",2005,2022
